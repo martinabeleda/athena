@@ -1,7 +1,7 @@
 use actix_web::{web, App, HttpServer};
 use std::sync::Mutex;
 
-use athena::{greet, AppState};
+use athena::{get_author, greet, list_authors, AppState};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -11,9 +11,12 @@ async fn main() -> std::io::Result<()> {
     });
 
     HttpServer::new(move || {
-        App::new()
-            .app_data(counter.clone())
-            .service(web::scope("/athena/v1").service(greet))
+        App::new().app_data(counter.clone()).service(
+            web::scope("/athena/v1")
+                .service(greet)
+                .service(get_author)
+                .service(list_authors),
+        )
     })
     .bind(("127.0.0.1", 8080))?
     .run()
