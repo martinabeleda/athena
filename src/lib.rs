@@ -71,7 +71,6 @@ impl Responder for Authors {
 #[get("/authors")]
 pub async fn list_authors(data: web::Data<AppState>) -> impl Responder {
     let authors = data.authors.lock().unwrap().clone();
-    println!("authors: {:?}", authors);
 
     authors
 }
