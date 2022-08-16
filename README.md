@@ -29,5 +29,11 @@ curl --header "Content-Type: application/json" \
 ### Get a list of authors
 
 ```shell
+curl -s localhost:8080/athena/v1/authors | jq
+```
 
+### Get an author by ID
+
+```shell
+curl -s localhost:8080/athena/v1/author/1 | jq
 ```

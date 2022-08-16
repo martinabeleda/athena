@@ -25,11 +25,16 @@ impl Responder for Author {
 }
 
 #[get("/author/{id}")]
-pub async fn get_author(id: web::Path<i32>, data: web::Data<AppState>) -> impl Responder {
+pub async fn get_author(id: web::Path<i32>, data: web::Data<AppState>) -> HttpResponse {
     let authors = data.authors.lock().unwrap();
-    for author in authors.authors {
-        if author.id = id {
-            return author;
+    let author_id = id.into_inner();
+    for author in &authors.authors {
+        if author.id.clone() == author_id {
+            let body = serde_json::to_string(&author).unwrap();
+
+            return HttpResponse::Ok()
+                .content_type(ContentType::json())
+                .body(body)
         }
     }
 
