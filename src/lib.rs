@@ -3,8 +3,8 @@ use actix_web::{
 };
 use serde::{Deserialize, Serialize};
 use std::sync::Mutex;
-// This struct represents an author
 
+// This struct represents an author
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Author {
     pub id: i32,
@@ -24,25 +24,33 @@ impl Responder for Author {
     }
 }
 
-#[get("/author")]
-pub async fn get_author() -> impl Responder {
-    Author {
-        id: 0,
-        first_name: String::from("Haruki"),
-        last_name: String::from("Murakami"),
+#[get("/author/{id}")]
+pub async fn get_author(id: web::Path<i32>, data: web::Data<AppState>) -> HttpResponse {
+    let authors = data.authors.lock().unwrap();
+    let author_id = id.into_inner();
+    for author in &authors.authors {
+        if author.id.clone() == author_id {
+            let body = serde_json::to_string(&author).unwrap();
+
+            return HttpResponse::Ok()
+                .content_type(ContentType::json())
+                .body(body)
+        }
     }
+
+    HttpResponse::NotFound()
+        .body("No author found for id: {id}")
 }
 
 #[post("/author")]
-pub async fn create(author: web::Json<Author>, data: web::Data<AppState>) -> impl Responder {
+pub async fn create_author(author: web::Json<Author>, data: web::Data<AppState>) -> impl Responder {
     let mut authors = data.authors.lock().unwrap();
     authors.authors.push(author.clone());
-    println!("Stored authors: {:?}", authors);
 
     author
 }
 
-// This struct holds all of the authors in memory
+// This struct represents a collection of Authors
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Authors {
     pub authors: Vec<Author>,
@@ -63,7 +71,6 @@ impl Responder for Authors {
 #[get("/authors")]
 pub async fn list_authors(data: web::Data<AppState>) -> impl Responder {
     let authors = data.authors.lock().unwrap().clone();
-    println!("authors: {:?}", authors);
 
     authors
 }
