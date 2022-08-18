@@ -17,16 +17,16 @@ cargo run
 
 ## Docker
 
-To build the image:
+To spin up a development service using `docker compose`, run:
 
 ```shell
-make build
+docker compose up
 ```
 
-To run the server in docker
+You can open a postgres shell by:
 
 ```shell
-make run
+docker exec -it athena-db-1 psql -U user
 ```
 
 ## Usage

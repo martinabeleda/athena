@@ -34,12 +34,11 @@ pub async fn get_author(id: web::Path<i32>, data: web::Data<AppState>) -> HttpRe
 
             return HttpResponse::Ok()
                 .content_type(ContentType::json())
-                .body(body)
+                .body(body);
         }
     }
 
-    HttpResponse::NotFound()
-        .body("No author found for id: {id}")
+    HttpResponse::NotFound().body("No author found for id: {id}")
 }
 
 #[post("/author")]
