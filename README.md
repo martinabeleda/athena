@@ -26,7 +26,7 @@ docker compose up
 You can open a postgres shell by:
 
 ```shell
-docker exec -it athena-db-1 psql -U user
+docker exec -it athena-db-1 psql -U postgres -d athena
 ```
 
 ## Usage

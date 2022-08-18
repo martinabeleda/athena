@@ -15,3 +15,13 @@ jobs:
         with:
           command: build
           args: --release --all-features
+
+  docker_build:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and run the stack
+        run: docker-compose up -d
+      - name: Test
+        run: curl -s localhost:8080/athena/v1/authors | jq

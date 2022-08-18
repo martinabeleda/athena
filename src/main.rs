@@ -5,6 +5,13 @@ use athena::{create_author, get_author, greet, list_authors, AppState, Author, A
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let port = 8080;
+    let host = "0.0.0.0";
+    println!(
+        "Starting athena service on host: {:?} port: {:?}",
+        host, port
+    );
+
     let counter = web::Data::new(AppState {
         app_name: String::from("Some Data"),
         authors: Mutex::new(Authors {
@@ -26,7 +33,7 @@ async fn main() -> std::io::Result<()> {
                 .service(list_authors),
         )
     })
-    .bind(("0.0.0.0", 8080))?
+    .bind((host, port))?
     .run()
     .await
 }
