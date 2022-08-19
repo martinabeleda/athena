@@ -1,7 +1,11 @@
-use actix_web::{web, App, HttpServer};
-use std::sync::Mutex;
+#[macro_use]
+extern crate diesel;
 
-use athena::{create_author, get_author, greet, list_authors, AppState, Author, Authors};
+use actix_web::{web, App, HttpServer};
+
+mod authors;
+mod db;
+mod schema;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -12,26 +16,8 @@ async fn main() -> std::io::Result<()> {
         host, port
     );
 
-    let counter = web::Data::new(AppState {
-        app_name: String::from("Some Data"),
-        authors: Mutex::new(Authors {
-            authors: vec![Author {
-                id: 0,
-                first_name: String::from("Haruki"),
-                last_name: String::from("Murakami"),
-            }],
-        }),
-        counter: Mutex::new(0),
-    });
-
     HttpServer::new(move || {
-        App::new().app_data(counter.clone()).service(
-            web::scope("/athena/v1")
-                .service(create_author)
-                .service(greet)
-                .service(get_author)
-                .service(list_authors),
-        )
+        App::new().service(web::scope("/athena/v1").configure(authors::init_routes))
     })
     .bind((host, port))?
     .run()
